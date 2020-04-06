@@ -1,3 +1,5 @@
+"""Part 1 Exercise 1"""
+
 def factorial(number):
     """Calculate the factorial of a number recursively.
 
