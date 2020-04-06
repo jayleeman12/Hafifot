@@ -21,7 +21,7 @@ In addition, you need to be familiar with APIs, HTTP and REST.
 ### Coronavirus Collisions
 1. Write a RESTful API that allows:
 - CRUD for people that tested positive for the virus (POST, GET, DELETE, PUT)
-- Given a location, check if you should be in isolation
+- Given a location and time, check if you should be in isolation
 2. Allow live updates. Using a techonology of your choice, allow getting updates from the server about new infected location and times, so you can know ASAP if you should be isolated.
 ## Part 3
 WIP - Search Engine Backend
