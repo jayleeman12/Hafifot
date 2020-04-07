@@ -1,0 +1,54 @@
+hardware:
+מבוא
+Motherboard
+Cpu
+Bios
+Hard disk
+Server and pc
+Networking:
+מבוא
+Osi model
+Internet protocol
+Ethernet
+Network and devices
+Vlan
+Storage:
+מבוא
+מידע ומערכי אחסון
+Raid
+Das
+Nas
+San
+Windows:
+מבוא
+מערכת הפעלה
+Boot process
+File system
+Processes and services
+Registry
+Ntfs permissions
+Shares
+Cmd
+Administrative tools
+Sysinternals suite
+Active directory and dns
+Linux:
+מבוא
+Putty and protocols
+Putty
+File system
+Basic commands
+Bash login and users
+Permissions
+Lvm
+Daemon and processes
+Installs in linux
+Links crons and logs
+Shares and mounts
+Boot process
+Virtualization:
+מבוא
+מבנה התשתית הוירטואלית
+Vsphere client guide
+Virtualization features
+מושגים נוספים
