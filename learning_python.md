@@ -16,6 +16,9 @@ Here, you should be familiar with design principles, SOLID & design patterns
 
 In addition, you need to be familiar with APIs, HTTP and REST.
 ### FTP Server
+
+**Design/SOLID Notes:** The file storage implemenation should be configured - when booting the server I should be able to choose `file_store: OS/ObjectStorage/Proxy` (no need to implement more than just one, just support the concept). This includes reading and writing files.
+
 1. **Python Accessibility** - Write a simple FTP server, accessible via python code (no need for an HTTP API or a CLI). The server should allow getting the files on the server, getting a specific file, storing a new file
 2. **REST API** - Expose the functionality through a REST API (use a library of your choice). Should expose a /files endpoint with support for POST, GET, DELETE, PUT
 ### Coronavirus Collisions
