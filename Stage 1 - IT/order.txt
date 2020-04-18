@@ -2,6 +2,7 @@ hardware:
 מבוא
 Motherboard
 Cpu
+Memory
 Bios
 Hard disk
 Server and pc
