@@ -3,6 +3,8 @@ from typing import Dict
 from abc import ABC
 from datetime import datetime
 from datetimerange import DateTimeRange
+from Hafifot.Solution.Error import AlreadyExistsError, NotFoundError
+from Hafifot.Solution.Person import Person
 
 
 class Event:
@@ -49,10 +51,14 @@ class Logger(ABC):
     def set_events(self, events: Dict):
         self.events = events
 
-    def get_event(self, event_id: int) -> Event:
-        return self.events[event_id]
+    def add_event(self, event: Event):
+        if event.get_id() in self.events:
+            raise AlreadyExistsError("already exists in the Corona logger")
+        self.events[event.get_id()] = event
 
     def delete_event(self, event_id: int):
+        if event_id not in self.events:
+            raise NotFoundError("event not fount in the Corona logger")
         del self.events[event_id]
 
 
@@ -68,3 +74,28 @@ class CoronaLogger(Logger):
 
     def set_incubation_period(self, incubation_period: int):
         self.incubation_period = incubation_period
+
+
+class CoronaCollisionChecker:
+    def __init__(self, logger: CoronaLogger):
+        self.logger = logger
+
+    def is_infected(self, event: Event) -> bool:
+        """Given an event check in the logger if there are intersections"""
+        # TODO
+        # check if the event before 12 days
+        for event_id, record in self.logger.get_events():
+            if record.get_time_range().is_intersection(event.get_time_range()):
+                return True
+
+        return False
+
+    def add_infected_record(self, location_history: Dict):
+        """Add a person event list to the logger"""
+
+        for event_id, record in location_history:
+            try:
+                self.logger.add_event(record)
+
+            except AlreadyExistsError as e:
+                print(f'Event with event id: {event_id} {e.message}')
