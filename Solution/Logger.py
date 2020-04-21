@@ -12,6 +12,30 @@ class Event:
         self.location = location
         self.event_id = event_id
 
+    def get_date(self) -> datetime:
+        return self.date
+
+    def set_date(self, date: datetime):
+        self.date = date
+
+    def get_time_range(self) -> DateTimeRange:
+        return self.time_range
+
+    def set_time_range(self, time_range: DateTimeRange):
+        self.time_range = time_range
+
+    def get_location(self) -> str:
+        return self.str
+
+    def set_location(self, location: datetime):
+        self.location = location
+
+    def get_id(self) -> int:
+        return self.event_id
+
+    def set_id(self, event_id: int):
+        self.event_id = event_id
+
 
 class Logger(ABC):
     """Base class for this module"""
