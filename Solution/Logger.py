@@ -4,20 +4,19 @@ from abc import ABC
 from datetime import datetime
 from datetimerange import DateTimeRange
 from Hafifot.Solution.Error import AlreadyExistsError, NotFoundError
-from Hafifot.Solution.Person import Person
 
 
 class Event:
-    def __init__(self, event_id: int, date: datetime, time_range: DateTimeRange, location: str):
+    def __init__(self, event_id: int, date: datetime.date, time_range: DateTimeRange, location: str):
         self.date = date
         self.time_range = time_range
         self.location = location
         self.event_id = event_id
 
-    def get_date(self) -> datetime:
+    def get_date(self) -> datetime.date:
         return self.date
 
-    def set_date(self, date: datetime):
+    def set_date(self, date: datetime.date):
         self.date = date
 
     def get_time_range(self) -> DateTimeRange:
@@ -27,9 +26,9 @@ class Event:
         self.time_range = time_range
 
     def get_location(self) -> str:
-        return self.str
+        return self.location
 
-    def set_location(self, location: datetime):
+    def set_location(self, location: str):
         self.location = location
 
     def get_id(self) -> int:
@@ -77,25 +76,37 @@ class CoronaLogger(Logger):
 
 
 class CoronaCollisionChecker:
-    def __init__(self, logger: CoronaLogger):
-        self.logger = logger
 
-    def is_infected(self, event: Event) -> bool:
+    @staticmethod
+    def is_infected(logger: CoronaLogger, event: Event) -> bool:
         """Given an event check in the logger if there are intersections"""
-        # TODO
-        # check if the event before 12 days
-        for event_id, record in self.logger.get_events():
+
+        for event_id, record in logger.get_events():
             if record.get_time_range().is_intersection(event.get_time_range()):
                 return True
 
         return False
 
-    def add_infected_record(self, location_history: Dict):
+    @staticmethod
+    def add_infected_record(logger: CoronaLogger, location_history: Dict):
         """Add a person event list to the logger"""
 
         for event_id, record in location_history:
             try:
-                self.logger.add_event(record)
+                logger.add_event(record)
 
             except AlreadyExistsError as e:
                 print(f'Event with event id: {event_id} {e.message}')
+
+    @staticmethod
+    def enter_isolation(logger: CoronaLogger, location_history: Dict) -> int:
+        """Given a location history check if the person need to enter isolation, """
+        delta = 0
+        for event_id, record in location_history:
+            if CoronaCollisionChecker.is_infected(logger, record):
+                days_post_incident = (datetime.today() - record.get_date()).days
+                if days_post_incident < logger.get_incubation_period():
+                    if delta < days_post_incident:
+                        delta = days_post_incident
+
+        return logger.get_incubation_period() - delta

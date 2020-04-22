@@ -56,19 +56,23 @@ class PersonFactory:
     def get_person(self, person_id: int) -> Person:
         return self.persons[person_id]
 
+    def create_person(self, person_id: int, status: Status, loc_history: Dict) -> Person:
+        if person_id in self.persons:
+            raise AlreadyExistsError(f'person ID: {person_id} already exists in the factory')
+        return Person(person_id, status, loc_history)
+
 
 class PersonController:
     """A class to preform actions on a specific Person"""
 
-    def __init__(self, person: Person):
-        self.person = person
-
-    def add_event(self, event: Event):
-        if event.get_id() in self.person.get_location_history():
+    @staticmethod
+    def add_event(self, person: Person, event: Event):
+        if event.get_id() in person.get_location_history():
             raise AlreadyExistsError("event already exists in person's details")
-        self.person.loc_history[event.get_id()] = event
+        person.loc_history[event.get_id()] = event
 
-    def delete_event(self, event_id: int):
-        if event_id not in self.person.get_location_history():
+    @staticmethod
+    def delete_event(self, person: Person, event_id: int):
+        if event_id not in person.get_location_history():
             raise NotFoundError("event not fount in person's details")
-        del self.person.loc_history[event_id]
+        del person.loc_history[event_id]
