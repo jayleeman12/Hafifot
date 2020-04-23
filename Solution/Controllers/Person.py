@@ -2,8 +2,8 @@
 import json
 from typing import Dict
 from enum import Enum
-from Hafifot.Solution.Logger import Event
-from Hafifot.Solution.Error import AlreadyExistsError, NotFoundError
+from Hafifot.Solution.Controllers.Logger import Event
+from Hafifot.Solution.Controllers.Error import AlreadyExistsError, NotFoundError
 
 
 class Status(Enum):
@@ -81,7 +81,6 @@ class PersonFactory:
     def update_person(self, person_id: int, status: Status, loc_history: Dict) -> Person:
         if person_id not in self.persons:
             raise NotFoundError(f'person ID: {person_id} not found in the factory')
-
         self.persons[person_id].set_status(status)
         self.persons[person_id].set_location_history(loc_history)
         return self.persons[person_id]

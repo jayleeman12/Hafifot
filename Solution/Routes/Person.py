@@ -1,8 +1,8 @@
 import json
 from flask import Flask, request
-from Hafifot.Solution.Person import PersonFactory, PersonController
-from Hafifot.Solution.Logger import CoronaLogger
-from Hafifot.Solution.Error import AlreadyExistsError, NotFoundError
+from Hafifot.Solution.Controllers.Person import PersonFactory, PersonController
+from Hafifot.Solution.Controllers.Logger import CoronaLogger
+from Hafifot.Solution.Controllers.Error import AlreadyExistsError, NotFoundError
 
 
 app = Flask(__name__)

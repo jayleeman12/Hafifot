@@ -1,9 +1,10 @@
 """Logger module"""
+import json
 from typing import Dict
 from abc import ABC
 from datetime import datetime
 from datetimerange import DateTimeRange
-from Hafifot.Solution.Error import AlreadyExistsError, NotFoundError
+from Hafifot.Solution.Controllers.Error import AlreadyExistsError, NotFoundError
 
 
 class Event:
@@ -60,6 +61,24 @@ class Logger(ABC):
             raise NotFoundError("event not fount in the Corona logger")
         del self.events[event_id]
 
+    def create_event(self, event_id: int, date: datetime.date, time_range: DateTimeRange, location: str) -> Event:
+        if event_id in self.events:
+            raise AlreadyExistsError(f'event ID: {event_id} already exists in the logger')
+        return Event(event_id, date, time_range, location)
+
+    def update_event(self, event_id: int, date: datetime.date, time_range: DateTimeRange, location: str) -> Event:
+        if event_id not in self.events:
+            raise NotFoundError(f'event ID: {event_id} not found in the logger')
+        self.events[event_id].set_date(date)
+        self.events[event_id].set_location(location)
+        self.events[event_id].set_time_range(time_range)
+        return self.events[event_id]
+
+    def get_event(self, event_id: int):
+        if event_id not in self.events:
+            raise NotFoundError(f'person ID: {event_id} not found in the logger')
+        return self.events[event_id]
+
 
 class CoronaLogger(Logger):
     """Corona Logger to keep track of corona infected locations"""
@@ -74,8 +93,18 @@ class CoronaLogger(Logger):
     def set_incubation_period(self, incubation_period: int):
         self.incubation_period = incubation_period
 
+    def events_to_json(self):
+        output = {}
+        for event in self.events.values():
+            output[event.get_id()] = json.loads(CoronaController.event_to_json(event))
+        return json.dumps({'events': output})
 
-class CoronaCollisionChecker:
+    def event_to_json(self, event_id):
+        event = self.get_event(event_id)
+        return CoronaController.event_to_json(event)
+
+
+class CoronaController:
 
     @staticmethod
     def is_infected(logger: CoronaLogger, event: Event) -> bool:
@@ -103,10 +132,16 @@ class CoronaCollisionChecker:
         """Given a location history check if the person need to enter isolation, """
         delta = 0
         for event_id, record in location_history:
-            if CoronaCollisionChecker.is_infected(logger, record):
+            if CoronaController.is_infected(logger, record):
                 days_post_incident = (datetime.today() - record.get_date()).days
                 if days_post_incident < logger.get_incubation_period():
                     if delta < days_post_incident:
                         delta = days_post_incident
 
         return logger.get_incubation_period() - delta
+
+    @staticmethod
+    def event_to_json(event: Event):
+        json_event = {'event_id': event.get_id(), 'date': event.get_date(),
+                      'time_range': event.get_time_range(),'loc_history': event.get_location()}
+        return json.dumps(json_event)
