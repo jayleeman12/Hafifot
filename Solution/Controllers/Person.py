@@ -1,6 +1,5 @@
 """Person module"""
 import json
-from typing import Dict
 from enum import Enum
 from Hafifot.Solution.Controllers.Logger import Event
 from Hafifot.Solution.Controllers.Error import AlreadyExistsError, NotFoundError
@@ -13,7 +12,9 @@ class Status(Enum):
 
 
 class Person:
-    def __init__(self, person_id: int, status: Status, loc_history: Dict):
+    """Class to represent a person entity"""
+
+    def __init__(self, person_id: int, status: Status, loc_history: dict):
         self.person_id = person_id
         self.status = status
         self.loc_history = loc_history
@@ -31,21 +32,22 @@ class Person:
     def set_status(self, status: Status):
         self.status = status
 
-    def get_location_history(self) -> Dict:
+    def get_location_history(self) -> dict:
         return self.loc_history
 
-    def set_location_history(self, loc_history: Dict):
+    def set_location_history(self, loc_history: dict):
         self.loc_history = loc_history
 
 
 class PersonFactory:
-    def __init__(self, persons: Dict):
+    """Factory class to keep track of all the people"""
+    def __init__(self, persons: dict):
         self.persons = persons
 
-    def get_persons(self):
+    def get_persons(self) -> dict:
         return self.persons
 
-    def set_persons(self, persons):
+    def set_persons(self, persons: dict):
         self.persons = persons
 
     def add_person(self, person: Person):
@@ -63,22 +65,22 @@ class PersonFactory:
             raise NotFoundError(f'person ID: {person_id} not found in the factory')
         return self.persons[person_id]
 
-    def create_person(self, person_id: int, status: Status, loc_history: Dict) -> Person:
+    def create_person(self, person_id: int, status: Status, loc_history: dict) -> Person:
         if person_id in self.persons:
             raise AlreadyExistsError(f'person ID: {person_id} already exists in the factory')
         return Person(person_id, status, loc_history)
 
-    def persons_to_json(self):
+    def persons_to_json(self) -> json:
         output = {}
         for person in self.persons.values():
             output[person.get_id()] = json.loads(PersonController.person_to_json(person))
         return json.dumps({'persons': output})
 
-    def person_to_json(self, person_id: int):
+    def person_to_json(self, person_id: int) -> json:
         person = self.get_person(person_id)
         return PersonController.person_to_json(person)
 
-    def update_person(self, person_id: int, status: Status, loc_history: Dict) -> Person:
+    def update_person(self, person_id: int, status: Status, loc_history: dict) -> Person:
         if person_id not in self.persons:
             raise NotFoundError(f'person ID: {person_id} not found in the factory')
         self.persons[person_id].set_status(status)
@@ -91,12 +93,16 @@ class PersonController:
 
     @staticmethod
     def add_event(person: Person, event: Event):
+        """Add event to a specific person's location history"""
+
         if event.get_id() in person.get_location_history():
             raise AlreadyExistsError("event already exists in person's details")
         person.loc_history[event.get_id()] = event
 
     @staticmethod
     def delete_event(person: Person, event_id: int):
+        """Delete event from specific person's location history"""
+
         if event_id not in person.get_location_history():
             raise NotFoundError("event not found in person's details")
         del person.loc_history[event_id]

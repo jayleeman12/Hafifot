@@ -1,6 +1,5 @@
 """Logger module"""
 import json
-from typing import Dict
 from abc import ABC
 from datetime import datetime
 from datetimerange import DateTimeRange
@@ -8,6 +7,7 @@ from Hafifot.Solution.Controllers.Error import AlreadyExistsError, NotFoundError
 
 
 class Event:
+    """A class to represent an event, including date, time and location"""
     def __init__(self, event_id: int, date: datetime.date, time_range: DateTimeRange, location: str):
         self.date = date
         self.time_range = time_range
@@ -40,15 +40,15 @@ class Event:
 
 
 class Logger(ABC):
-    """Base class for this module"""
+    """Base class for this module, an abstract class for a log of events"""
 
-    def __init__(self, events: Dict):
+    def __init__(self, events: dict):
         self.events = events
 
-    def get_events(self) -> Dict:
+    def get_events(self) -> dict:
         return self.events
 
-    def set_events(self, events: Dict):
+    def set_events(self, events: dict):
         self.events = events
 
     def add_event(self, event: Event):
@@ -74,7 +74,7 @@ class Logger(ABC):
         self.events[event_id].set_time_range(time_range)
         return self.events[event_id]
 
-    def get_event(self, event_id: int):
+    def get_event(self, event_id: int) -> Event:
         if event_id not in self.events:
             raise NotFoundError(f'person ID: {event_id} not found in the logger')
         return self.events[event_id]
@@ -83,7 +83,7 @@ class Logger(ABC):
 class CoronaLogger(Logger):
     """Corona Logger to keep track of corona infected locations"""
 
-    def __init__(self, events: Dict, incubation_period: int):
+    def __init__(self, events: dict, incubation_period: int):
         super().__init__(events)
         self.incubation_period = incubation_period
 
@@ -105,6 +105,7 @@ class CoronaLogger(Logger):
 
 
 class CoronaController:
+    """Static controller, to preform actions on the logger"""
 
     @staticmethod
     def is_infected(logger: CoronaLogger, event: Event) -> bool:
@@ -117,7 +118,7 @@ class CoronaController:
         return False
 
     @staticmethod
-    def add_infected_record(logger: CoronaLogger, location_history: Dict):
+    def add_infected_record(logger: CoronaLogger, location_history: dict):
         """Add a person event list to the logger"""
 
         for event_id, record in location_history:
@@ -128,8 +129,8 @@ class CoronaController:
                 print(f'Event with event id: {event_id} {e.message}')
 
     @staticmethod
-    def enter_isolation(logger: CoronaLogger, location_history: Dict) -> int:
-        """Given a location history check if the person need to enter isolation, """
+    def enter_isolation(logger: CoronaLogger, location_history: dict) -> int:
+        """Given a location history check if the person need to enter isolation"""
         delta = 0
         for event_id, record in location_history:
             if CoronaController.is_infected(logger, record):
