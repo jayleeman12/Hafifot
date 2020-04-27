@@ -111,8 +111,9 @@ class CoronaController:
     def is_infected(logger: CoronaLogger, event: Event) -> bool:
         """Given an event check in the logger if there are intersections"""
 
-        for event_id, record in logger.get_events():
-            if record.get_time_range().is_intersection(event.get_time_range()):
+        for record in logger.get_events().values():
+            if record.get_time_range().is_intersection(event.get_time_range()) \
+                    and record.get_location() == event.get_location():
                 return True
 
         return False
@@ -148,5 +149,5 @@ class CoronaController:
         json_event = {'event_id': event.get_id(), 'date': event.get_date().strftime('%Y-%m-%d'),
                       'time_range': f'{event.get_time_range().start_datetime.strftime(start_format)} '
                                     f'{event.get_time_range().end_datetime.strftime(end_format)}',
-                      'loc_history': event.get_location()}
+                      'location': event.get_location()}
         return json.dumps(json_event)
