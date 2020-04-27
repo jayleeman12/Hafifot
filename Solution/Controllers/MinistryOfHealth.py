@@ -118,4 +118,3 @@ class CoronaDept(MinistryOfHealth):
                 updates[person_id] = CoronaController.enter_isolation(self.logger, person)
 
         return updates
-
