@@ -143,6 +143,10 @@ class CoronaController:
 
     @staticmethod
     def event_to_json(event: Event):
-        json_event = {'event_id': event.get_id(), 'date': event.get_date(),
-                      'time_range': event.get_time_range(),'loc_history': event.get_location()}
+        start_format = event.get_time_range().start_time_format
+        end_format = event.get_time_range().end_time_format
+        json_event = {'event_id': event.get_id(), 'date': event.get_date().strftime('%Y-%m-%d'),
+                      'time_range': f'{event.get_time_range().start_datetime.strftime(start_format)} '
+                                    f'{event.get_time_range().end_datetime.strftime(end_format)}',
+                      'loc_history': event.get_location()}
         return json.dumps(json_event)
