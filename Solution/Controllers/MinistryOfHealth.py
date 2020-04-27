@@ -14,11 +14,26 @@ class MinistryOfHealth(ABC):
 
 
 class CoronaDept(MinistryOfHealth):
-    """A class to wrap the factory and the logger instances and functionality"""
+    """A Singleton class to wrap the factory and the logger instances and functionality"""
+
+    instance = None
+
+    @staticmethod
+    def get_instance():
+        """ Static access method. """
+        if CoronaDept.instance is None:
+            CoronaDept()
+        return CoronaDept.instance
+
     def __init__(self):
-        super().__init__()
-        self.factory = PersonFactory({})
-        self.logger = CoronaLogger({}, 14)
+        """ Virtually private constructor. """
+        if CoronaDept.instance is not None:
+            raise Exception("This class is a singleton!")
+        else:
+            super().__init__()
+            CoronaDept.factory = PersonFactory({})
+            CoronaDept.logger = CoronaLogger({}, 14)
+            CoronaDept.instance = self
 
     def get_factory(self) -> PersonFactory:
         return self.factory
@@ -82,6 +97,12 @@ class CoronaDept(MinistryOfHealth):
 
     def get_event(self, event_id: int) -> Event:
         return self.logger.get_event(event_id)
+
+    def events_to_json(self) -> json:
+        return self.logger.events_to_json()
+
+    def event_to_json(self, event_id) -> json:
+        return self.logger.events_to_json(event_id)
 
     # For a casual (not recorded) event check if isolation needed
     # In other words, check if the time and location are infected

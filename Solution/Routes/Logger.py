@@ -1,9 +1,11 @@
 """Route layout of /events URL, CRUD functionality for corona events"""
 
 import json
+from datetime import datetime
+from datetimerange import DateTimeRange
 from flask import Blueprint, request
-from Hafifot.Solution.Sever import *
-from Hafifot.Solution.Controllers.Logger import CoronaLogger, CoronaController
+from Hafifot.Solution.Controllers.MinistryOfHealth import CoronaDept
+from Hafifot.Solution.Controllers.Logger import CoronaController
 from Hafifot.Solution.Controllers.Error import AlreadyExistsError, NotFoundError
 
 
@@ -15,26 +17,28 @@ def create_event():
     req_data = request.get_json()
     event = json.loads(json.dumps(req_data))
     try:
-        event = corona_dept.create_event(event['event_id'], event['date'],
-                                         event['time_range'],
-                                         event['location'])
-        corona_dept.add_event(event)
+        event = CoronaDept.get_instance().create_event(event['event_id'],
+                                                       datetime.strptime(event['date'], '%Y-%m-%d'),
+                                                       DateTimeRange(event['time_range'].split(' ')[0],
+                                                                     event['time_range'].split(' ')[1]),
+                                                       event['location'])
+        CoronaDept.get_instance().add_event(event)
 
     except AlreadyExistsError as e:
         return e.message
 
-    return CoronaController.event_to_json(corona_dept.get_logger().get_event(event.get_id()))
+    return CoronaController.event_to_json(CoronaDept.get_instance().get_logger().get_event(event.get_id()))
 
 
 @events_route.route('/events', methods=['GET'])
 def get_events():
-    return corona_dept.events_to_json()
+    return CoronaDept.get_instance().events_to_json()
 
 
 @events_route.route('/events/<int:event_id>', methods=['DELETE'])
 def delete_event(event_id):
     try:
-        corona_dept.delete_event(event_id)
+        CoronaDept.get_instance().delete_event(event_id)
         return json.dumps(f'Event with ID: {event_id} deleted successfully')
 
     except NotFoundError as e:
@@ -46,7 +50,10 @@ def update_event(event_id):
     req_data = request.get_json()
     event = json.loads(json.dumps(req_data))
     try:
-        event = corona_dept.update_event(event_id, event['date'], event['time_range'], event['location'])
+        event = CoronaDept.get_instance().update_event(event_id, datetime.strptime(event['date'], '%Y-%m-%d'),
+                                                       DateTimeRange(event['time_range'].split(' ')[0],
+                                                                     event['time_range'].split(' ')[1]),
+                                                       event['location'])
         return json.dumps(f'Event with ID: {event_id} updated successfully')
 
     except NotFoundError as e:
@@ -56,7 +63,7 @@ def update_event(event_id):
 @events_route.route('/events/<int:event_id>', methods=['GET'])
 def get_event(event_id):
     try:
-        return CoronaController.event_to_json(corona_dept.get_event(event_id))
+        return CoronaController.event_to_json(CoronaDept.get_instance().get_event(event_id))
 
     except NotFoundError as e:
         return json.dumps(e.message)
