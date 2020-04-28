@@ -3,8 +3,8 @@ import json
 from abc import ABC
 from datetime import datetime
 from datetimerange import DateTimeRange
-from Hafifot.Solution.Controllers.Person import PersonFactory,PersonController, Person, Status
-from Hafifot.Solution.Controllers.Logger import CoronaLogger,CoronaController, Event
+from Hafifot.Solution.Controllers.Person import PersonFactory, Person, Status
+from Hafifot.Solution.Controllers.Logger import CoronaLogger, CoronaController, Event
 
 
 class MinistryOfHealth(ABC):
@@ -56,7 +56,7 @@ class CoronaDept(MinistryOfHealth):
     # Add a person to the factory, if infected, add the location history to the logger
     def add_person(self, person: Person):
         self.factory.add_person(person)
-        if person.status == 'Corona':
+        if person.status.name == 'Corona':
             CoronaController.add_infected_record(self.logger, person.loc_history)
 
     def delete_person(self, person_id: int):
@@ -67,12 +67,6 @@ class CoronaDept(MinistryOfHealth):
 
     def create_person(self, person_id: int, status: Status, loc_history: dict) -> Person:
         return self.factory.create_person(person_id, status, loc_history)
-
-    def persons_to_json(self) -> json:
-        return self.factory.persons_to_json()
-
-    def person_to_json(self, person_id: int):
-        return self.factory.person_to_json(person_id)
 
     def update_person(self, person_id: int, status: Status, loc_history: dict) -> Person:
         return self.factory.update_person(person_id, status, loc_history)
@@ -98,12 +92,6 @@ class CoronaDept(MinistryOfHealth):
     def get_event(self, event_id: int) -> Event:
         return self.logger.get_event(event_id)
 
-    def events_to_json(self) -> json:
-        return self.logger.events_to_json()
-
-    def event_to_json(self, event_id) -> json:
-        return self.logger.events_to_json(event_id)
-
     # For a casual (not recorded) event check if isolation needed
     # In other words, check if the time and location are infected
     def check_collision(self, event: Event) -> bool:
@@ -113,8 +101,10 @@ class CoronaDept(MinistryOfHealth):
     # Returns a dict of people that need isolation and for how many days
     def check_for_updates(self) -> dict:
         updates = {}
-        for person_id, person in self.factory.get_persons():
-            if CoronaController.enter_isolation(self.logger, person) > 0:
-                updates[person_id] = CoronaController.enter_isolation(self.logger, person)
+        result = None
+        for person in self.factory.get_persons().values():
+            result = CoronaController.enter_isolation(self.logger, person.get_location_history())
+            if result > -1:
+                updates[person.get_id()] = result
 
         return updates

@@ -1,6 +1,8 @@
 """Route layout of /factory URL, CRUD functionality for persons in the factory"""
 
 import json
+from datetime import datetime
+from datetimerange import DateTimeRange
 from flask import Blueprint, request
 from Hafifot.Solution.Controllers.MinistryOfHealth import CoronaDept
 from Hafifot.Solution.Controllers.Person import PersonController, Status
@@ -14,9 +16,9 @@ factory_route = Blueprint('factory_route', __name__)
 def create_person():
     req_data = request.get_json()
     person = json.loads(json.dumps(req_data))
+    loc_history = parse_location_history(person['loc_history'])
     try:
-        person = CoronaDept.get_instance().create_person(person['person_id'], Status(person['status']),
-                                                         person['loc_history'])
+        person = CoronaDept.get_instance().create_person(person['person_id'], Status(person['status']), loc_history)
         CoronaDept.get_instance().add_person(person)
 
     except AlreadyExistsError as e:
@@ -27,7 +29,7 @@ def create_person():
 
 @factory_route.route('/persons', methods=['GET'])
 def get_persons():
-    return CoronaDept.get_instance().persons_to_json()
+    return PersonController.persons_to_json(CoronaDept.get_instance().get_factory())
 
 
 @factory_route.route('/persons/<int:person_id>', methods=['DELETE'])
@@ -59,3 +61,16 @@ def get_person(person_id):
 
     except NotFoundError as e:
         return json.dumps(e.message)
+
+
+def parse_location_history(json_loc_history: dict) -> dict:
+    loc_history = {}
+    for item in json_loc_history.values():
+        loc_history[int(item['event_id'])] = \
+            CoronaDept.get_instance().create_event(int(item['event_id']),
+                                                   datetime.strptime(item['date'], '%Y-%m-%d'),
+                                                   DateTimeRange(item['time_range'].split(' ')[0],
+                                                   item['time_range'].split(' ')[1]),
+                                                   item['location'])
+
+    return loc_history

@@ -1,7 +1,7 @@
 """Person module"""
 import json
 from enum import Enum
-from Hafifot.Solution.Controllers.Logger import Event
+from Hafifot.Solution.Controllers.Logger import Event, CoronaController
 from Hafifot.Solution.Controllers.Error import AlreadyExistsError, NotFoundError
 
 
@@ -70,16 +70,6 @@ class PersonFactory:
             raise AlreadyExistsError(f'person ID: {person_id} already exists in the factory')
         return Person(person_id, status, loc_history)
 
-    def persons_to_json(self) -> json:
-        output = {}
-        for person in self.persons.values():
-            output[person.get_id()] = json.loads(PersonController.person_to_json(person))
-        return json.dumps({'persons': output})
-
-    def person_to_json(self, person_id: int) -> json:
-        person = self.get_person(person_id)
-        return PersonController.person_to_json(person)
-
     def update_person(self, person_id: int, status: Status, loc_history: dict) -> Person:
         if person_id not in self.persons:
             raise NotFoundError(f'person ID: {person_id} not found in the factory')
@@ -109,7 +99,19 @@ class PersonController:
 
     @staticmethod
     def person_to_json(person: Person):
-        json_person = {'person_id': person.get_id(), 'status': person.get_status(),
-                       'loc_history': person.get_location_history()}
+        json_loc_history = CoronaController.events_to_json(person.get_location_history())
+        json_person = {'person_id': person.get_id(), 'status': str(person.get_status()),
+                       'loc_history': json.loads(json_loc_history)['events']}
         return json.dumps(json_person)
 
+    @staticmethod
+    def persons_to_json(factory: PersonFactory) -> json:
+        output = {}
+        for person in factory.persons.values():
+            output[person.get_id()] = json.loads(PersonController.person_to_json(person))
+        return json.dumps({'persons': output})
+
+    @staticmethod
+    def factory_person_to_json(factory: PersonFactory, person_id: int) -> json:
+        person = factory.get_person(person_id)
+        return PersonController.person_to_json(person)

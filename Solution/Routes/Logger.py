@@ -17,7 +17,7 @@ def create_event():
     req_data = request.get_json()
     event = json.loads(json.dumps(req_data))
     try:
-        event = CoronaDept.get_instance().create_event(event['event_id'],
+        event = CoronaDept.get_instance().create_event(int(event['event_id']),
                                                        datetime.strptime(event['date'], '%Y-%m-%d'),
                                                        DateTimeRange(event['time_range'].split(' ')[0],
                                                                      event['time_range'].split(' ')[1]),
@@ -32,7 +32,7 @@ def create_event():
 
 @events_route.route('/events', methods=['GET'])
 def get_events():
-    return CoronaDept.get_instance().events_to_json()
+    return CoronaController.events_to_json(CoronaDept.get_instance().get_logger().get_events())
 
 
 @events_route.route('/events/<int:event_id>', methods=['DELETE'])
