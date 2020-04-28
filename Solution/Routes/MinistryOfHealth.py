@@ -15,8 +15,8 @@ moh_route = Blueprint('moh_route', __name__)
 def get_updates():
     persons = CoronaDept.get_instance().check_for_updates()
     output = {}
-    for person_id, days in persons:
-        output[person_id] = json.dumps({'person_id': person_id, 'isolation_days': days})
+    for person_id, days in persons.items():
+        output[person_id] = json.loads(json.dumps({'person_id': person_id, 'isolation_days': days}))
     return json.dumps({'persons': output})
 
 

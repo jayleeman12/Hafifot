@@ -93,16 +93,6 @@ class CoronaLogger(Logger):
     def set_incubation_period(self, incubation_period: int):
         self.incubation_period = incubation_period
 
-    def events_to_json(self):
-        output = {}
-        for event in self.events.values():
-            output[event.get_id()] = json.loads(CoronaController.event_to_json(event))
-        return json.dumps({'events': output})
-
-    def event_to_json(self, event_id):
-        event = self.get_event(event_id)
-        return CoronaController.event_to_json(event)
-
 
 class CoronaController:
     """Static controller, to preform actions on the logger"""
@@ -122,7 +112,7 @@ class CoronaController:
     def add_infected_record(logger: CoronaLogger, location_history: dict):
         """Add a person event list to the logger"""
 
-        for event_id, record in location_history:
+        for event_id, record in location_history.items():
             try:
                 logger.add_event(record)
 
@@ -132,15 +122,18 @@ class CoronaController:
     @staticmethod
     def enter_isolation(logger: CoronaLogger, location_history: dict) -> int:
         """Given a location history check if the person need to enter isolation"""
-        delta = 0
-        for event_id, record in location_history:
+        delta = -1
+        for record in location_history.values():
             if CoronaController.is_infected(logger, record):
                 days_post_incident = (datetime.today() - record.get_date()).days
                 if days_post_incident < logger.get_incubation_period():
                     if delta < days_post_incident:
                         delta = days_post_incident
 
-        return logger.get_incubation_period() - delta
+        if delta > -1:
+            return logger.get_incubation_period() - delta
+        else:
+            return delta
 
     @staticmethod
     def event_to_json(event: Event):
@@ -151,3 +144,15 @@ class CoronaController:
                                     f'{event.get_time_range().end_datetime.strftime(end_format)}',
                       'location': event.get_location()}
         return json.dumps(json_event)
+
+    @staticmethod
+    def events_to_json(events: dict) -> json:
+        output = {}
+        for event in events.values():
+            output[event.get_id()] = json.loads(CoronaController.event_to_json(event))
+        return json.dumps({'events': output})
+
+    @staticmethod
+    def logger_event_to_json(logger: CoronaLogger, event_id: int) -> json:
+        event = logger.get_event(event_id)
+        return CoronaController.event_to_json(event)
