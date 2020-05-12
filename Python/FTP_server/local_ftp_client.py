@@ -7,8 +7,6 @@ class LocalFtpClient:
         self.file_controller = controller
 
     def save_file(self, file_path, filename):
-        print(p.isfile(file_path))
-
         with open(file_path, 'rb') as f:
             data = f.read()
 
