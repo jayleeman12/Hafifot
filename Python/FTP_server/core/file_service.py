@@ -1,10 +1,8 @@
 from os import path, listdir
+from core.file_controller import FileController
 
 
-class FileService:
-    def __init__(self, source_dir):
-        self.source_dir = source_dir
-
+class FileService(FileController):
     def save_file(self, filename, file_data):
         file_path = path.join(self.source_dir, filename)
         with open(file_path, 'wb') as f:
