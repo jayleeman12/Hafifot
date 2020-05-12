@@ -23,7 +23,31 @@ class FtpShell(cmd.Cmd):
     @staticmethod
     def help_save():
         print("Saves a file onto the ft server")
-        print("save [file source] [file output]")
+        print("save {file_source} {file_output}")
+
+    # Get file options
+    def do_read(self, inp):
+        try:
+            print(self.ft_client.get_file_content(inp))
+        except FileNotFoundError:
+            print(f"The file doesnt exist: {inp}")
+
+    @staticmethod
+    def help_read():
+        print("Reads the file to the shell")
+        print("read {file_path}")
+
+    # List dir options
+    def do_ls(self, inp):
+        try:
+            print(" ".join(self.ft_client.get_dir_content(inp)))
+        except FileNotFoundError:
+            print(f"The dir doesnt exit: {inp}")
+
+    @staticmethod
+    def help_ls():
+        print("Listing the content of given directory")
+        print("ls [file_path]")
 
     # General utilities
     @staticmethod
@@ -48,3 +72,5 @@ class FtpShell(cmd.Cmd):
             return self.do_exit(line)
         elif line == 'cls':
             return os.system('clear')
+        else:
+            return ''
