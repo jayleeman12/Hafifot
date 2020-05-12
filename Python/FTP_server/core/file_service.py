@@ -1,10 +1,11 @@
-from os import path, listdir
+from os import path, listdir, makedirs
 from core.file_controller import FileController
 
 
 class FileService(FileController):
     def save_file(self, filename, file_data):
         file_path = path.join(self.source_dir, filename)
+        makedirs(path.split(file_path)[0])
         with open(file_path, 'wb') as f:
             f.write(file_data)
 
