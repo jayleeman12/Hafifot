@@ -48,4 +48,3 @@ class FtpShell(cmd.Cmd):
             return self.do_exit(line)
         elif line == 'cls':
             return os.system('clear')
-
