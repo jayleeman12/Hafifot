@@ -12,8 +12,8 @@ class LocalFtpClient:
 
         self.file_controller.save_file(filename, data)
 
-    def get(self, path: str):
-        if p.isdir(path):
-            self.file_controller.get_all_files(path)
-        else:
-            self.file_controller.get_file(path)
+    def get_dir_content(self, path: str):
+        return self.file_controller.get_all_files(path)
+
+    def get_file_content(self, path: str):
+        return self.file_controller.get_file(path).decode('utf-8')
