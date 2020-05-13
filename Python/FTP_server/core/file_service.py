@@ -4,6 +4,7 @@ from core.file_controller import FileController
 
 class FileService(FileController):
     def __init__(self, source_dir):
+        source_dir = path.abspath(source_dir)
         super().__init__(source_dir)
         if not path.isdir(source_dir):
             makedirs(source_dir)
