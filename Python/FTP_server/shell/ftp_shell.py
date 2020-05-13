@@ -1,6 +1,6 @@
 import cmd
 import os
-from ftp_core import LocalFtpClient
+from .local_ftp_client import LocalFtpClient
 
 
 class FtpShell(cmd.Cmd):

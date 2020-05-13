@@ -1,6 +1,5 @@
-from shell import FtpShell
-from ftp_core import FileService
-from ftp_core import LocalFtpClient
+from shell import FtpShell, LocalFtpClient
+from services.ftp_core import FileService
 
 
 if __name__ == '__main__':

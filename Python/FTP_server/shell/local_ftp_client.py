@@ -1,22 +1,21 @@
-from os import path as p
-from ftp_core.file_controller import FileController
+from services.ftp_core.storage_service import StorageService
 
 
 class LocalFtpClient:
-    def __init__(self, controller: FileController):
-        self.file_controller = controller
+    def __init__(self, service: StorageService):
+        self.storage_service = service
 
     def save_file(self, source_file: str, output_filename: str):
         with open(source_file, 'rb') as f:
             data = f.read()
 
-        self.file_controller.save_file(output_filename, data)
+        self.storage_service.save_file(output_filename, data)
 
     def get_dir_content(self, path: str):
-        return self.file_controller.list_dir(path)
+        return self.storage_service.list_dir(path)
 
     def get_file_content(self, path: str):
-        return self.file_controller.get_file(path).decode('utf-8')
+        return self.storage_service.get_file(path).decode('utf-8')
 
     def delete_file(self, path: str):
-        return self.file_controller.delete_file(path)
+        return self.storage_service.delete_file(path)
