@@ -1,5 +1,5 @@
 from os import path, listdir, makedirs
-from core.file_controller import FileController
+from ftp_core.file_controller import FileController
 
 
 class FileService(FileController):

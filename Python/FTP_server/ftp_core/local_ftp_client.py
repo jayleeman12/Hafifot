@@ -1,16 +1,16 @@
 from os import path as p
-from core.file_controller import FileController
+from ftp_core.file_controller import FileController
 
 
 class LocalFtpClient:
     def __init__(self, controller: FileController):
         self.file_controller = controller
 
-    def save_file(self, file_path: str, filename: str):
-        with open(file_path, 'rb') as f:
+    def save_file(self, source_file: str, output_filename: str):
+        with open(source_file, 'rb') as f:
             data = f.read()
 
-        self.file_controller.save_file(filename, data)
+        self.file_controller.save_file(output_filename, data)
 
     def get_dir_content(self, path: str):
         return self.file_controller.get_all_files(path)
