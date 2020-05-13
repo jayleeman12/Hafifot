@@ -13,7 +13,7 @@ class LocalFtpClient:
         self.file_controller.save_file(output_filename, data)
 
     def get_dir_content(self, path: str):
-        return self.file_controller.get_all_files(path)
+        return self.file_controller.list_dir(path)
 
     def get_file_content(self, path: str):
         return self.file_controller.get_file(path).decode('utf-8')
