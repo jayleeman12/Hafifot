@@ -11,3 +11,6 @@ class FileController:
 
     def get_file(self, filename):
         raise NotImplementedError
+
+    def delete_file(self, filename):
+        raise NotImplementedError
