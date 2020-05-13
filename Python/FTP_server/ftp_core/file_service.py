@@ -17,7 +17,7 @@ class FileService(FileController):
         with open(file_path, 'wb') as f:
             f.write(file_data)
 
-    def get_all_files(self, root_dir='.'):
+    def list_dir(self, root_dir='.'):
         if root_dir:
             file_path = path.join(self.source_dir, root_dir)
         else:
