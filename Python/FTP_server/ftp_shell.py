@@ -4,7 +4,7 @@ from local_ftp_client import LocalFtpClient
 
 
 class FtpShell(cmd.Cmd):
-    prompt = "$ "
+    prompt = f"$ "
     intro = "Welcome to MAMA-FT Server\nEnter a command: (?) for help"
 
     def __init__(self, client: LocalFtpClient):
@@ -58,6 +58,23 @@ class FtpShell(cmd.Cmd):
     @staticmethod
     def help_exit(self):
         print("exit the application. Shorthand: 'exit', 'Ctrl-D'.")
+
+    @staticmethod
+    def do_cd(inp):
+        if inp:
+            os.chdir(inp)
+
+    @staticmethod
+    def help_cd():
+        print("Navigate the file system")
+
+    @staticmethod
+    def do_pwd(self):
+        print(os.getcwd())
+
+    @staticmethod
+    def help_pwd():
+        print("Print the current working directory")
 
     @staticmethod
     def do_cls(self):
