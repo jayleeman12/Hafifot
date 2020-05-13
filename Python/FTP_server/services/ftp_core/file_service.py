@@ -1,11 +1,11 @@
 import os
-from .file_controller import FileController
+from .storage_service import StorageService
 
 
-class FileService(FileController):
+class FileService(StorageService):
     def __init__(self, source_dir):
+        super().__init__()
         source_dir = os.path.abspath(source_dir)
-        super().__init__(source_dir)
         if not os.path.isdir(source_dir):
             os.makedirs(source_dir)
 
