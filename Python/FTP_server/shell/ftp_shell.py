@@ -14,7 +14,6 @@ class FtpShell(cmd.Cmd):
     # Save options
     def do_save(self, inp):
         src, out = inp.split()
-
         try:
             self.ft_client.save_file(src, out)
         except FileNotFoundError:
@@ -48,6 +47,18 @@ class FtpShell(cmd.Cmd):
     def help_ls():
         print("Listing the content of given directory")
         print("ls [file_path]")
+
+    # Delete file option
+    def do_rm(self, inp):
+        try:
+            self.ft_client.delete_file(inp)
+        except FileNotFoundError:
+            print(f"The given path doesnt exist: {inp}")
+
+    @staticmethod
+    def help_rm():
+        print("Removes a given file from the server")
+        print("rm {path_to_file}")
 
     # General utilities
     @staticmethod
