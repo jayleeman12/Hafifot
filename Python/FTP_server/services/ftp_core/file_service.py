@@ -1,5 +1,5 @@
 import os
-from ftp_core.file_controller import FileController
+from .file_controller import FileController
 
 
 class FileService(FileController):
