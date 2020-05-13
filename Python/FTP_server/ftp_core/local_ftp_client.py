@@ -17,3 +17,6 @@ class LocalFtpClient:
 
     def get_file_content(self, path: str):
         return self.file_controller.get_file(path).decode('utf-8')
+
+    def delete_file(self, path: str):
+        return self.file_controller.delete_file(path)
