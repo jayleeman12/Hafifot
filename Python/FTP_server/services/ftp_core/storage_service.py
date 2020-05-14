@@ -1,7 +1,7 @@
 
-class FileController:
-    def __init__(self, source_dir):
-        self.source_dir = source_dir
+class StorageService:
+    def __init__(self):
+        pass
 
     def save_file(self, filename, file_data):
         raise NotImplementedError

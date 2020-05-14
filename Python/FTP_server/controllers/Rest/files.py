@@ -1,10 +1,10 @@
 from flask import request, jsonify
 from flask_restful import Resource
-from services.ftp_core import file_controller
+from services.ftp_core import StorageService
 
 
 class Files(Resource):
-    def __init__(self, storage_service: file_controller):
+    def __init__(self, storage_service: StorageService):
         self.storage = storage_service
 
     def get(self):
