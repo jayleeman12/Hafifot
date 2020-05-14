@@ -23,4 +23,8 @@ def create_app():
 if __name__ == '__main__':
     app = create_app()
     app.logger.setLevel(logging.WARNING)
+    fh = logging.FileHandler('ftp_server.log')
+    fh.setLevel(logging.INFO)
+    fh.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
+    app.logger.addHandler(fh)
     app.run()
