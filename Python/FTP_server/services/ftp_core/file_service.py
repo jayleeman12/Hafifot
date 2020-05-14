@@ -31,4 +31,5 @@ class FileService(StorageService):
         return data
 
     def delete_file(self, filename):
-        os.remove(filename)
+        file_path = os.path.join(self.source_dir, filename)
+        os.remove(file_path)
