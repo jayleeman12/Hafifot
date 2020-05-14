@@ -14,12 +14,12 @@ class FilesById(Resource):
         for encoding in ['utf-8', 'latin-1', 'ascii']:
             try:
                 decoded_data = data.decode(encoding)
-                return jsonify({"filename": file_id, "data": decoded_data})
+                return jsonify(FileResponse(file_id, decoded_data).get_response())
             except UnicodeDecodeError:
                 self.logger.error(f"Failed to decode {encoding} data of: {file_id}")
-        return "Server can't decode file data", 500
+        return f"Server can't decode file data: {file_id}", 500
 
     def put(self, file_id):
         data = request.files['file'].read()
         self.storage.save_file(file_id, data)
-        return jsonify(FileResponse(file_id))
+        return jsonify(FileResponse(file_id).get_response())
