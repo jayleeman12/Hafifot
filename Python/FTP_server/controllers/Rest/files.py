@@ -4,7 +4,8 @@ from services.ftp_core import StorageService
 
 
 class Files(Resource):
-    def __init__(self, storage_service: StorageService):
+    def __init__(self, storage_service: StorageService, **kwargs):
+        self.logger = kwargs.get('logger')
         self.storage = storage_service
 
     def get(self):
