@@ -6,7 +6,7 @@ class StorageService:
     def save_file(self, filename, file_data):
         raise NotImplementedError
 
-    def list_dir(self, root_dir):
+    def list_dir(self, root_dir='.'):
         raise NotImplementedError
 
     def get_file(self, filename):
