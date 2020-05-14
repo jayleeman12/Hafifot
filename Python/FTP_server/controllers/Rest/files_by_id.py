@@ -27,7 +27,7 @@ class FilesById(Resource):
     def delete(self, file_id):
         try:
             self.storage.delete_file(file_id)
-            return FileResponse(file_id)
+            return FileResponse(file_id).get_response()
         except FileNotFoundError as err:
             self.logger.error(err)
             result = FileResponse(file_id).get_response()
