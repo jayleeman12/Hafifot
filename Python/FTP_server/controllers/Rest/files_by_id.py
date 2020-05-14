@@ -23,3 +23,12 @@ class FilesById(Resource):
         data = request.files['file'].read()
         self.storage.save_file(file_id, data)
         return jsonify(FileResponse(file_id).get_response())
+
+    def delete(self, file_id):
+        try:
+            self.storage.delete_file(file_id)
+        except FileNotFoundError as err:
+            self.logger.error(err)
+            result = FileResponse(file_id).get_response()
+            result['error'] = err
+            return jsonify(result), 404
