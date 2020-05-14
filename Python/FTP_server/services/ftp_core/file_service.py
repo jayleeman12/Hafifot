@@ -5,7 +5,7 @@ from .storage_service import StorageService
 class FileService(StorageService):
     def __init__(self, source_dir):
         super().__init__()
-        source_dir = os.path.abspath(source_dir)
+        self.source_dir = os.path.abspath(source_dir)
         if not os.path.isdir(source_dir):
             os.makedirs(source_dir)
 
@@ -31,4 +31,5 @@ class FileService(StorageService):
         return data
 
     def delete_file(self, filename):
-        os.remove(filename)
+        file_path = os.path.join(self.source_dir, filename)
+        os.remove(file_path)
