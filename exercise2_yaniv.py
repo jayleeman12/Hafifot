@@ -1,5 +1,5 @@
 """
-Exercise2 part2
+Exercise2 part1
 Author: Yaniv Elayev
 """
 
